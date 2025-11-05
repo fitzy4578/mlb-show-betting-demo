@@ -25,11 +25,27 @@ const FinnDuelSportsbook = () => {
       }
     };
 
+    // Initial measurement
     updateHeight();
+
+    // Update on resize
     window.addEventListener('resize', updateHeight);
+
+    // Update when video loads
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener('loadedmetadata', updateHeight);
+    }
+
+    // Fallback: measure after a short delay to ensure video is rendered
+    const timer = setTimeout(updateHeight, 100);
 
     return () => {
       window.removeEventListener('resize', updateHeight);
+      if (video) {
+        video.removeEventListener('loadedmetadata', updateHeight);
+      }
+      clearTimeout(timer);
     };
   }, []);
 
@@ -338,14 +354,16 @@ const FinnDuelSportsbook = () => {
       </div>
 
       <div style={styles.optionsContainer}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#1a1a2e', textAlign: 'center' }}>
             {options[0].name}
           </div>
           <motion.div
             style={{
               ...styles.option,
-              ...(suspended ? styles.optionSuspended : styles.optionOpen)
+              ...(suspended ? styles.optionSuspended : styles.optionOpen),
+              width: '100%',
+              maxWidth: '120px'
             }}
             whileHover={suspended ? {} : { scale: 1.02, borderColor: '#ffd700' }}
             whileTap={suspended ? {} : { scale: 0.98 }}
@@ -369,7 +387,8 @@ const FinnDuelSportsbook = () => {
           alignSelf: 'flex-end',
           marginBottom: '12px',
           width: line ? 'auto' : '40px',
-          minWidth: line ? 'auto' : '40px'
+          minWidth: line ? 'auto' : '40px',
+          flexShrink: 0
         }}>
           {line && (
             <div style={{
@@ -385,14 +404,16 @@ const FinnDuelSportsbook = () => {
           )}
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: '600', color: '#1a1a2e', textAlign: 'center' }}>
             {options[1].name}
           </div>
           <motion.div
             style={{
               ...styles.option,
-              ...(suspended ? styles.optionSuspended : styles.optionOpen)
+              ...(suspended ? styles.optionSuspended : styles.optionOpen),
+              width: '100%',
+              maxWidth: '120px'
             }}
             whileHover={suspended ? {} : { scale: 1.02, borderColor: '#ffd700' }}
             whileTap={suspended ? {} : { scale: 0.98 }}
